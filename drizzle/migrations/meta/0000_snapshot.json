@@ -1,5 +1,5 @@
 {
-  "id": "4bc0cb16-21a4-44d1-84ee-94f0a920aabe",
+  "id": "ed30da60-56b9-4b5c-bc31-ba4ae5234629",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1799,15 +1799,10 @@
               "isExpression": false,
               "asc": true,
               "nulls": "last"
-            },
-            {
-              "expression": "is_active",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
             }
           ],
           "isUnique": true,
+          "where": "\"sessions\".\"is_active\" IS TRUE",
           "concurrently": false,
           "method": "btree",
           "with": {}

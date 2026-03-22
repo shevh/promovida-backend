@@ -2,6 +2,7 @@
 import { pgTable, uuid, varchar, timestamp, text, boolean, uniqueIndex } from 'drizzle-orm/pg-core';
 import { users } from './users.schema';
 import { tenants } from './tenants.schema';
+import { sql } from 'drizzle-orm';
 
 export const sessions = pgTable(
     'sessions',
@@ -17,7 +18,7 @@ export const sessions = pgTable(
 
         // Tokens
         accessToken: text('access_token').notNull(), // JWT access token (ou hash dele)
-        refreshTokenHash: text('refresh_token_hash').notNull(), // hash do refresh token (nunca armazene o raw)
+        refreshTokenHash: text('refresh_token_hash').notNull(), // hash do refresh token
         refreshTokenExpiresAt: timestamp('refresh_token_expires_at').notNull(),
 
         // Metadados de segurança
@@ -35,8 +36,18 @@ export const sessions = pgTable(
         deletedAt: timestamp('deleted_at'),
     },
     (table) => ({
-        // Índices para performance
-        idxUserActive: uniqueIndex('idx_user_active').on(table.userId, table.isActive),
+        // Índices para performance e regras de negócio
+
+        // ── Correção principal: índice UNIQUE apenas para sessões ATIVAS ──
+        idxUserActive: uniqueIndex('idx_user_active')
+            .on(table.userId)
+            .where(sql`${table.isActive} IS TRUE`), // ou .where(eq(table.isActive, true))
+
+        // Índice único no hash do refresh token (mantido)
         idxRefreshHash: uniqueIndex('idx_refresh_hash').on(table.refreshTokenHash),
+
+        // Índices opcionais úteis (você pode adicionar se precisar)
+        // idxUserRefresh: index('idx_user_refresh').on(table.userId, table.refreshTokenHash),
+        // idxExpiresAt: index('idx_expires_at').on(table.expiresAt),
     }),
 );

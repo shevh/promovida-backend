@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
 import { DrizzleService } from '../../db/drizzle.service'; // ajuste seu import
 import { sessions } from '../../db/schema/sessions.schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -40,6 +40,16 @@ export class SessionsService {
     async invalidateSession(refreshToken: string) {
         const hash = this.hashRefreshToken(refreshToken);
         await this.drizzle.db.update(sessions).set({ isActive: false }).where(eq(sessions.refreshTokenHash, hash));
+    }
+
+    async invalidateUserActiveSessions(userId: string): Promise<void> {
+        await this.drizzle.db
+            .update(sessions)
+            .set({
+                isActive: false,
+                deletedAt: new Date(),
+            })
+            .where(and(eq(sessions.userId, userId), eq(sessions.isActive, true)));
     }
 
     async findActiveSessionByRefreshHash(hash: string) {

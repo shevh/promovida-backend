@@ -29,11 +29,13 @@ export class AuthService {
     }
 
     async login(user: any, ip?: string, userAgent?: string) {
-        // Placeholder – depois vamos buscar tenants e roles
+        // Invalida TODAS as sessões ativas anteriores deste usuário
+        await this.sessionsService.invalidateUserActiveSessions(user.id);
+
         const payload: JwtPayload = {
             sub: user.id,
             email: user.email,
-            tid: undefined, // vamos adicionar depois
+            tid: undefined,
             roles: [],
         };
 
@@ -41,17 +43,9 @@ export class AuthService {
             expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION') || '15m',
         });
 
-        // Gera refresh token (opaco, não JWT – mais seguro)
         const refreshToken = crypto.randomBytes(32).toString('hex');
 
-        // Salva sessão
-        await this.sessionsService.createSession(
-            user.id,
-            null, // currentTenantId – vamos adicionar depois
-            refreshToken,
-            ip,
-            userAgent,
-        );
+        await this.sessionsService.createSession(user.id, null, refreshToken, ip, userAgent);
 
         return { accessToken, refreshToken };
     }

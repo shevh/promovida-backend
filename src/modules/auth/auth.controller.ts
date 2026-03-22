@@ -7,6 +7,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { UserResponseDto } from '../users/dto/user-response.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -48,16 +49,16 @@ export class AuthController {
             maxAge: 7 * 24 * 60 * 60,
         });
 
+        console.log(`Usuário ${JSON.stringify(user, null, 2)}`);
+
         // Retorna no corpo para Swagger e testes manuais
+        const userResponseDto = new UserResponseDto();
+        Object.assign(userResponseDto, user);
         return {
             message: 'Login realizado com sucesso',
             accessToken, // ← aqui!
             refreshToken, // ← aqui!
-            user: {
-                id: user.id,
-                email: user.email,
-                // adicione mais campos se quiser (name, etc.)
-            },
+            user: userResponseDto,
         };
     }
 
