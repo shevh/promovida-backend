@@ -9,7 +9,7 @@
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
         "start": "nest start",
-        "start:prod": "npm run db:migrate && node dist/main",
+        "start:prod": "node dist/main",
         "start:dev": "nest start --watch",
         "dev:typecheck": "tsc --watch --noEmit --pretty --preserveWatchOutput",
         "dev": "concurrently -k --raw \"npm:dev:typecheck\" \"npm:start:dev\"",
