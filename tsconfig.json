@@ -41,5 +41,5 @@
   },
 
   // Exclua pastas que não precisam ser compiladas
-  "exclude": ["node_modules", "dist", "coverage", "test/**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "coverage", "test/**/*.spec.ts", "drizzle.config.ts"]
 }
