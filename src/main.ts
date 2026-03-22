@@ -30,7 +30,7 @@ async function bootstrap() {
 
   // CORS – obrigatório para cookies cross-origin (ex: frontend em localhost:3443)
   app.enableCors({
-    origin: ['http://localhost:3443', 'https://seu-frontend.com'], // ajuste para seu domínio Next.js
+    origin: ['http://localhost:3000', 'http://localhost:3443', 'https://seu-frontend.com'], // ajuste para seu domínio Next.js
     credentials: true, // permite cookies
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',

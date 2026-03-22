@@ -79,4 +79,16 @@ export class AuthService {
 
         return { accessToken: newAccess }; // ou { accessToken, refreshToken: newRefresh }
     }
+
+    async logout(refreshToken: string): Promise<void> {
+        if (!refreshToken) return;
+
+        try {
+            const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
+            await this.sessionsService.invalidateSession(hash); // invalida a sessão no banco
+            console.log('✅ Sessão invalidada com sucesso');
+        } catch (error) {
+            console.error('Erro ao invalidar sessão no logout:', error);
+        }
+    }
 }

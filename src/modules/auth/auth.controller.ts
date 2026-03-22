@@ -64,6 +64,34 @@ export class AuthController {
     // @Post('refresh')
     // async refresh() { ... }
 
-    // @Post('logout')
-    // async logout() { ... }
+    @Post('logout')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Realizar logout e invalidar sessão' })
+    async logout(@Req() req: FastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
+        const refreshToken = req.cookies.refresh_token;
+
+        // Invalida a sessão no banco
+        if (refreshToken) {
+            await this.authService.logout(refreshToken);
+        }
+
+        // Limpa os cookies (igual ao login)
+        const isProd = this.configService.get('NODE_ENV') === 'production';
+
+        res.clearCookie('access_token', {
+            path: '/',
+            httpOnly: true,
+            secure: isProd,
+            sameSite: 'strict',
+        });
+
+        res.clearCookie('refresh_token', {
+            path: '/',
+            httpOnly: true,
+            secure: isProd,
+            sameSite: 'strict',
+        });
+
+        return { message: 'Logout realizado com sucesso' };
+    }
 }

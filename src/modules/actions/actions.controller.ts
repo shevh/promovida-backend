@@ -43,7 +43,7 @@ export class ActionsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, ManagerRoleGuard)
+  // @UseGuards(JwtAuthGuard, ManagerRoleGuard)
   @ApiOperation({ summary: 'Lista ações com filtros e paginação' })
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'perPage', required: false })
